@@ -58,7 +58,7 @@ public class MySQLConnection {
         return databasePassword;
     }
 
-    Connection connection;
+    public Connection connection;
 
     public void connect() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
