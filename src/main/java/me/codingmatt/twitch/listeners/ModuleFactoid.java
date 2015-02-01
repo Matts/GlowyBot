@@ -16,9 +16,9 @@ import java.sql.Statement;
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
 @Listeners
-public class CommandFactoid extends ListenerAdapter<PircBotX> {
+public class ModuleFactoid extends ListenerAdapter<PircBotX> {
 
-    public CommandFactoid(){
+    public ModuleFactoid(){
         try {
             setupDB();
         } catch (ClassNotFoundException e) {

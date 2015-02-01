@@ -10,10 +10,10 @@ import org.pircbotx.hooks.events.MessageEvent;
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
 @Listeners
-public class CommandListener extends ListenerAdapter<PircBotX> {
+public class ModuleCommands extends ListenerAdapter<PircBotX> {
 
 
-    public CommandListener(){
+    public ModuleCommands(){
         Registry.setCommands();
     }
 

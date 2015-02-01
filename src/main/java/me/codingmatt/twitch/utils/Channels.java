@@ -25,7 +25,7 @@ public class Channels {
         try {
             TwitchBot.mySQLConnection.connect();
             stmt = TwitchBot.mySQLConnection.connection.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS `CHANNELS`(NAME CHAR(50)) ";
+            String sql = "CREATE TABLE IF NOT EXISTS `CHANNELS`(NAME CHAR(50), LINKPURGE BOOLEAN);";
             stmt.executeUpdate(sql);
             stmt.close();
             TwitchBot.mySQLConnection.disconnect();
@@ -51,9 +51,10 @@ public class Channels {
 
     public void addChannel(String channel) throws SQLException, ClassNotFoundException {
         TwitchBot.mySQLConnection.connect();
-        String sql = "INSERT INTO `CHANNELS` (NAME) VALUES(?)";
+        String sql = "INSERT INTO `CHANNELS` (NAME, LINKPURGE) VALUES(?, ?)";
         PreparedStatement statement = TwitchBot.mySQLConnection.connection.prepareStatement(sql);
         statement.setString(1, channel.toLowerCase());
+        statement.setBoolean(2, true);
         statement.executeUpdate();
         statement.close();
         TwitchBot.mySQLConnection.disconnect();
@@ -64,6 +65,37 @@ public class Channels {
         String sql = "DELETE FROM `CHANNELS` WHERE `NAME` = ?;";
         PreparedStatement statement = TwitchBot.mySQLConnection.connection.prepareStatement(sql);
         statement.setString(1, channel.toLowerCase());
+        statement.executeUpdate();
+        statement.close();
+        TwitchBot.mySQLConnection.disconnect();
+    }
+
+    public boolean shouldPurgeLink(String channels) throws SQLException, ClassNotFoundException {
+        boolean purgeLink = false;
+        TwitchBot.mySQLConnection.connect();
+        try{
+            ResultSet result;
+            String sql = "SELECT * FROM `CHANNELS` WHERE `NAME`=?";
+            PreparedStatement preparedStatement =  TwitchBot.mySQLConnection.connection.prepareStatement(sql);
+            preparedStatement.setString(1, channels.toLowerCase());
+            result = preparedStatement.executeQuery();
+            if(result.next()){
+                purgeLink = result.getBoolean("LINKPURGE");
+            }
+            TwitchBot.mySQLConnection.disconnect();
+            result.close();
+            preparedStatement.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return purgeLink;
+    }
+
+    public void updatePurgeLink(String channel, boolean shouldPurge) throws SQLException, ClassNotFoundException {
+        TwitchBot.mySQLConnection.connect();
+        PreparedStatement statement = TwitchBot.mySQLConnection.connection.prepareStatement("UPDATE `CHANNELS` SET `LINKPURGE`=? WHERE `NAME`=?");
+        statement.setBoolean(1, shouldPurge);
+        statement.setString(2, channel.toLowerCase());
         statement.executeUpdate();
         statement.close();
         TwitchBot.mySQLConnection.disconnect();
