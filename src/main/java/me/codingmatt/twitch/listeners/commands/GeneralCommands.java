@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
-@Command
+@Command(name = "GeneralCommands")
 public class GeneralCommands extends CommandBase {
     @Override
     public void onMessage(MessageEvent<PircBotX> event) {

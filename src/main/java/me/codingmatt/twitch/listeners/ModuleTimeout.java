@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
-@Listeners
+@Listeners(name = "ModuleTimeout")
 public class ModuleTimeout extends ListenerAdapter<PircBotX> {
     public ArrayList<String> channelPurgeLinks = new ArrayList<String>();
 

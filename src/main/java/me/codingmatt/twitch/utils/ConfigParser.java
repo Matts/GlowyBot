@@ -43,9 +43,22 @@ public class ConfigParser {
 
         setServerConfiguration();
 
+        getUpdaterXMLURL();
+
     }
 
-
+    public String getUpdaterXMLURL(){
+        NodeList update = document.getElementsByTagName("updateXML");
+        for (int i = 0; i < update.getLength(); i++) {
+            Node parent = update.item(i);
+            if(parent.getNodeType() == parent.ELEMENT_NODE)
+            {
+                Element e = (Element) parent;
+                return e.getAttribute("host");
+            }
+        }
+        return null;
+    }
 
     private void setServerConfiguration(){
         NodeList serverList = document.getElementsByTagName("servers");
@@ -85,6 +98,30 @@ public class ConfigParser {
             }
         }
 
+    }
+
+    public static String getVersion(){
+        NodeList tag = document.getElementsByTagName("config");
+        for (int i = 0; i < tag.getLength(); i++) {
+            Node parent = tag.item(i);
+            if (parent.getNodeType() == parent.ELEMENT_NODE) {
+                Element t = (Element) parent;
+                return t.getAttribute("botVersion");
+            }
+        }
+        return null;
+    }
+
+    public static boolean willAutoUpdate(){
+        NodeList tag = document.getElementsByTagName("config");
+        for (int i = 0; i < tag.getLength(); i++) {
+            Node parent = tag.item(i);
+            if (parent.getNodeType() == parent.ELEMENT_NODE) {
+                Element t = (Element) parent;
+                return Boolean.parseBoolean(t.getAttribute("autoUpdate"));
+            }
+        }
+        return false;
     }
 
     public MySQLConnection setupSQLFromConfig(){

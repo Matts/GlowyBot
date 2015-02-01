@@ -9,9 +9,8 @@ import org.pircbotx.hooks.events.MessageEvent;
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
-@Listeners
+@Listeners(name = "ModuleCommands")
 public class ModuleCommands extends ListenerAdapter<PircBotX> {
-
 
     public ModuleCommands(){
         Registry.setCommands();

@@ -2,10 +2,7 @@ package me.codingmatt.twitch;
 
 import me.codingmatt.twitch.objects.IRCConnection;
 import me.codingmatt.twitch.objects.MySQLConnection;
-import me.codingmatt.twitch.utils.Channels;
-import me.codingmatt.twitch.utils.ConfigParser;
-import me.codingmatt.twitch.utils.Registry;
-import me.codingmatt.twitch.utils.Viewers;
+import me.codingmatt.twitch.utils.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
@@ -14,6 +11,7 @@ import org.pircbotx.hooks.Listener;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.security.krb5.Config;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -28,7 +26,7 @@ public class TwitchBot {
     public static final Logger logger = LoggerFactory.getLogger(TwitchBot.class.getName());
     public static final Reflections reflection = new Reflections("me.codingmatt.twitch");
 
-    private static ConfigParser configParser;
+    public static ConfigParser configParser;
     public static MySQLConnection mySQLConnection;
 
     public static boolean databaseFallback=false;
@@ -36,8 +34,14 @@ public class TwitchBot {
     public static Channels channels;
     public static ArrayList<String> channelsJoined = new ArrayList<String>();
 
+    public static String VERSION;
+
     public static void main(String[] args){
         configParser = new ConfigParser("config.xml");
+
+        VERSION = ConfigParser.getVersion();
+
+        new Updater();
 
         mySQLConnection = configParser.setupSQLFromConfig();
         mySQLConnection.testConnection();
@@ -49,14 +53,12 @@ public class TwitchBot {
             e.printStackTrace();
         }
         Viewers.updateViewers.start();
+
         new TwitchBot();
 
     }
 
-    public static Object o = new Object();
-
     public TwitchBot() {
-
             IRCConnection config = configParser.servers.get(0); //TODO: Set-up multibot
 
             Configuration.Builder confi = new Configuration.Builder();

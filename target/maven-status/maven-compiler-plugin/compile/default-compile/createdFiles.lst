@@ -1,0 +1,16 @@
+me\codingmatt\twitch\listeners\ModuleCommands.class
+me\codingmatt\twitch\TwitchBot.class
+me\codingmatt\twitch\utils\Channels.class
+me\codingmatt\twitch\utils\Viewers$1.class
+me\codingmatt\twitch\listeners\commands\GeneralCommands.class
+me\codingmatt\twitch\utils\Viewers.class
+me\codingmatt\twitch\objects\annotations\Command.class
+me\codingmatt\twitch\objects\IRCConnection.class
+me\codingmatt\twitch\objects\CommandBase.class
+me\codingmatt\twitch\listeners\ModuleTimeout.class
+me\codingmatt\twitch\utils\ConfigParser.class
+me\codingmatt\twitch\objects\annotations\Listeners.class
+me\codingmatt\twitch\utils\Registry.class
+me\codingmatt\twitch\listeners\ModuleFactoid.class
+me\codingmatt\twitch\objects\MySQLConnection.class
+me\codingmatt\twitch\utils\JSONParser.class

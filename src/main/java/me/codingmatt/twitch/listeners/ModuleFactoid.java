@@ -15,7 +15,7 @@ import java.sql.Statement;
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
-@Listeners
+@Listeners(name = "ModuleFactoids")
 public class ModuleFactoid extends ListenerAdapter<PircBotX> {
 
     public ModuleFactoid(){
