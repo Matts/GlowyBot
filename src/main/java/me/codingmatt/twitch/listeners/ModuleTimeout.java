@@ -27,7 +27,6 @@ public class ModuleTimeout extends ListenerAdapter<PircBotX> {
 
                 if(TwitchBot.channels.shouldPurgeLink(TwitchBot.channelsJoined.get(i))){
                     channelPurgeLinks.add(TwitchBot.channelsJoined.get(i).toLowerCase());
-                    System.out.println(TwitchBot.channelsJoined.get(i));
                 }else{
                     channelPurgeLinks.remove(TwitchBot.channelsJoined.get(i).toLowerCase());
                 }
