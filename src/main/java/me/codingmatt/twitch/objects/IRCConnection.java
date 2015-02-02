@@ -14,6 +14,8 @@ public class IRCConnection {
     private String serverPassword;
     private String defaultChannel;
 
+    private String[] modules;
+
     public void setName(String name) {
         this.name = name;
     }
@@ -76,5 +78,13 @@ public class IRCConnection {
 
     public String getDefaultChannel() {
         return defaultChannel;
+    }
+
+    public void setModules(String[] modulesList){
+        modules = modulesList;
+    }
+
+    public String[] getModules(){
+        return modules;
     }
 }

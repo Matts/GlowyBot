@@ -33,5 +33,8 @@ public class GeneralCommands extends CommandBase {
                 event.respond(e.getMessage());
             }
         }
+        if(event.getMessage().trim().split(" ")[0].substring(1).equalsIgnoreCase("test")){
+            event.respond("test");
+        }
     }
 }

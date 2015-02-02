@@ -90,6 +90,27 @@ public class ConfigParser {
                                 if(parent.getChildNodes().item(j).getChildNodes().item(k).getNodeName().equalsIgnoreCase("version")){
                                     config.setVersion(parent.getChildNodes().item(j).getChildNodes().item(k).getTextContent().trim());
                                 }
+                                if(parent.getChildNodes().item(j).getChildNodes().item(k).getNodeName().equalsIgnoreCase("modules")){
+                                    NodeList moduleList = parent.getChildNodes().item(j).getChildNodes().item(k).getChildNodes();
+
+                                    int ij=0;
+                                    int cycles=0;
+                                    for (int p = 0; p < moduleList.getLength(); p++) {
+                                        if(moduleList.item(p).getNodeType() == parent.ELEMENT_NODE) {
+                                            cycles++;
+                                        }
+                                    }
+                                    String[] modules = new String[cycles];
+                                    for (int l = 0; l < moduleList.getLength(); l++) {
+                                        if(moduleList.item(l).getNodeType() == parent.ELEMENT_NODE){
+                                            Element module = (Element) moduleList.item(l);
+                                            modules[ij] = module.getAttribute("name");
+                                            ij++;
+                                        }
+                                    }
+                                    System.out.println(modules[0]);
+                                    config.setModules(modules);
+                                }
                             }
                         }
                         servers.add(config);

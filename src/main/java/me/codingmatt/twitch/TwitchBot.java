@@ -4,6 +4,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import me.codingmatt.twitch.objects.IRCConnection;
 import me.codingmatt.twitch.objects.MySQLConnection;
+import me.codingmatt.twitch.objects.annotations.Listeners;
 import me.codingmatt.twitch.utils.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
@@ -90,9 +91,20 @@ public class TwitchBot {
 
         Registry.setBaseListeners();
 
+        ArrayList<Listener> usingListeners = new ArrayList<Listener>();
+
         for (Listener listen : Registry.listeners) {
-            confi.addListener(listen);
+            for (int i = 0; i < config.getModules().length; i++) {
+                if(config.getModules()[i].equalsIgnoreCase(listen.getClass().getAnnotation(Listeners.class).name())){
+                    usingListeners.add(listen);
+                }
+            }
         }
+
+        for (int i = 0; i < usingListeners.size(); i++) {
+            confi.addListener(usingListeners.get(i));
+        }
+
 
         for (String channel : channelsJoined) {
             confi.addAutoJoinChannel(channel);
