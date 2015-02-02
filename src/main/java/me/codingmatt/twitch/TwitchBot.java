@@ -207,6 +207,15 @@ public class TwitchBot {
         Element serverNameElement = xmlDoc.createElement("name");
         Element loginNameElement = xmlDoc.createElement("login");
         Element versionNameElement = xmlDoc.createElement("version");
+        Element moduleElement = xmlDoc.createElement("modules");
+
+        String[] modules = new String[]{"ModuleCommands","ModuleFactoid","ModuleTimeout"};
+
+        for (int i = 0; i < modules.length; i++) {
+            Element module = xmlDoc.createElement("module");
+            module.setAttribute("name", modules[i]);
+            moduleElement.appendChild(module);
+        }
 
         serverNameElement.setAttribute("autoNickChange", autoNickChange.equalsIgnoreCase("") ? "true" : autoNickChange);
 
@@ -225,6 +234,7 @@ public class TwitchBot {
         serverElement.appendChild(serverNameElement);
         serverElement.appendChild(loginNameElement);
         serverElement.appendChild(versionNameElement);
+        serverElement.appendChild(moduleElement);
 
         serversElement.appendChild(serverElement);
 
