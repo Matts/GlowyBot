@@ -44,6 +44,8 @@ public class TwitchBot {
 
     public static String VERSION;
 
+    public static String[] controllers;
+
     public static void main(String[] args){
         try {
             File file = new File("config.xml");
@@ -69,8 +71,13 @@ public class TwitchBot {
         } catch (Exception e){
             e.printStackTrace();
         }
+        Viewers.updateAllViewers();
+
         Viewers.updateViewers.start();
 
+        new HTTPRequest();
+
+        
         new TwitchBot();
 
     }
@@ -110,6 +117,7 @@ public class TwitchBot {
             confi.addAutoJoinChannel(channel);
         }
 
+        controllers = config.getControllers();
         PircBotX bot = new PircBotX(confi.buildConfiguration());
 
         try {

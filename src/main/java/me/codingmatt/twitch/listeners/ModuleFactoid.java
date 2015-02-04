@@ -2,7 +2,9 @@ package me.codingmatt.twitch.listeners;
 
 import me.codingmatt.twitch.TwitchBot;
 import me.codingmatt.twitch.objects.CommandBase;
+import me.codingmatt.twitch.objects.Factoid;
 import me.codingmatt.twitch.objects.annotations.Listeners;
+import me.codingmatt.twitch.utils.Permission;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -11,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
@@ -18,10 +22,16 @@ import java.sql.Statement;
 @Listeners(name = "ModuleFactoids")
 public class ModuleFactoid extends ListenerAdapter<PircBotX> {
 
+    ArrayList<Factoid> factoids = new ArrayList<Factoid>();
+
     public ModuleFactoid(){
         try {
             setupDB();
+
+            cacheFactoids();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -42,47 +52,47 @@ public class ModuleFactoid extends ListenerAdapter<PircBotX> {
 
     @Override
     public void onMessage(MessageEvent<PircBotX> event) {
-        //!add Hello mod this is a command
         if (event.getMessage().trim().split(" ")[0].substring(1).equalsIgnoreCase("add")) {
-            try {
-                addCommand(event.getChannel().getName(), event.getMessage().trim().split(" ")[1], event.getMessage().trim().substring(event.getMessage().split(" ")[0].length() + event.getMessage().split(" ")[1].length() + event.getMessage().split(" ")[2].length() + 2), event.getMessage().trim().split(" ")[2], event.getUser().getNick());
-            } catch (Exception e) {
-                event.respond(e.getMessage());
+            if(Permission.hasPermission(Permission.Perm.MOD,event.getUser().getNick().toLowerCase(),event.getChannel().getName().toLowerCase())) {
+                try {
+                    addCommand(event.getChannel().getName(), event.getMessage().trim().split(" ")[1], event.getMessage().trim().substring(event.getMessage().split(" ")[0].length() + event.getMessage().split(" ")[1].length() + event.getMessage().split(" ")[2].length() + 2), event.getMessage().trim().split(" ")[2], event.getUser().getNick());
+                    event.respond("Command Created!");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    event.respond(e.getMessage());
+                }
+            }else{
+                Permission.noPerm(event, Permission.Perm.MOD);
             }
         }
         if (event.getMessage().trim().split(" ")[0].substring(1).equalsIgnoreCase("remove")) {
-            try {
-                removeCommand(event.getChannel().getName(), event.getMessage().trim().split(" ")[1]);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            if(Permission.hasPermission(Permission.Perm.MOD,event.getUser().getNick().toLowerCase(),event.getChannel().getName().toLowerCase())) {
+                try {
+                    removeCommand(event.getChannel().getName(), event.getMessage().trim().split(" ")[1]);
+                    event.respond("Command Removed!");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    event.respond(e.getMessage());
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    event.respond(e.getMessage());
+                }
+            }else{
+                Permission.noPerm(event, Permission.Perm.MOD);
             }
         }
-        if(event.getMessage().trim().split(" ")[0].substring(1).equalsIgnoreCase("get")){
-            try {
-                event.getChannel().send().message(getOutput(event.getChannel().getName(), event.getMessage().trim().split(" ")[1]));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
+        if(event.getMessage().trim().split(" ")[0].startsWith("!")) {
             String output = getOutput(event.getChannel().getName(), event.getMessage().trim().split(" ")[0].substring(1));
-            if(event.getMessage().trim().split(" ")[0].substring(0,1).equalsIgnoreCase("!")) {
-                if(!output.equalsIgnoreCase(event.getMessage().trim().split(" ")[0].substring(1))) {
+            if(!output.equalsIgnoreCase(event.getMessage().trim().split(" ")[0].substring(1))) {
+                if(Permission.Perm.parsePerm(getPermission(event.getChannel().getName(),event.getMessage().trim().split(" ")[0].substring(1))).getHeight()>=Permission.getHighestPerm(event.getUser().getNick(),event.getChannel().getName()).getHeight()) {
                     event.getChannel().send().message(output);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
     public void addCommand(String channel, String command, String output, String permission, String user) throws SQLException, ClassNotFoundException {
+
         TwitchBot.mySQLConnection.connect();
         String sql = "INSERT INTO `FACTOIDS` (COMMAND, USER, OUTPUT, PERM, CHANNEL) VALUES(?,?,?,?,?)";
         PreparedStatement statement = TwitchBot.mySQLConnection.connection.prepareStatement(sql);
@@ -94,6 +104,7 @@ public class ModuleFactoid extends ListenerAdapter<PircBotX> {
         statement.executeUpdate();
         statement.close();
         TwitchBot.mySQLConnection.disconnect();
+        factoids.add(new Factoid(channel.toLowerCase(), user.toLowerCase(), command.toLowerCase(), output.toLowerCase().trim(), permission.toLowerCase()));
     }
 
     public void removeCommand(String channel, String command) throws SQLException, ClassNotFoundException {
@@ -105,47 +116,53 @@ public class ModuleFactoid extends ListenerAdapter<PircBotX> {
         statement.executeUpdate();
         statement.close();
         TwitchBot.mySQLConnection.disconnect();
+        factoids.remove(command.toLowerCase());
     }
 
-    public String getOutput(String channel, String command) throws SQLException, ClassNotFoundException {
-        ResultSet result;
-        TwitchBot.mySQLConnection.connect();
-        String sql = "SELECT * FROM `FACTOIDS` WHERE `CHANNEL` = ? AND `COMMAND`=?";
-        PreparedStatement preparedStatement = TwitchBot.mySQLConnection.connection.prepareStatement(sql);
-        preparedStatement.setString(1, channel.toLowerCase());
-        preparedStatement.setString(2, command.toLowerCase());
-        result = preparedStatement.executeQuery();
-        if (result.next())
-            return result.getString("OUTPUT");
-        TwitchBot.mySQLConnection.disconnect();
-        return command.toLowerCase();
+    public String getOutput(String channel, String command) {
+        for (int i = 0; i < factoids.size(); i++) {
+            if(factoids.get(i).getChannel().equalsIgnoreCase(channel) && factoids.get(i).getCommand().equalsIgnoreCase(command)){
+                return factoids.get(i).getOutput();
+            }
+        }
+        return command;
     }
 
-    public String getPermission(String channel, String command) throws SQLException, ClassNotFoundException {
-        ResultSet result;
-        TwitchBot.mySQLConnection.connect();
-        String sql = "SELECT * FROM `FACTOIDS` WHERE `CHANNEL` = ? AND `COMMAND`=?";
-        PreparedStatement preparedStatement = TwitchBot.mySQLConnection.connection.prepareStatement(sql);
-        preparedStatement.setString(1, channel.toLowerCase());
-        preparedStatement.setString(2, command.toLowerCase());
-        result = preparedStatement.executeQuery();
-        if(result.next())
-            return result.getString("PERM");
-        TwitchBot.mySQLConnection.disconnect();
-        return command.toLowerCase();
+    public String getPermission(String channel, String command) {
+        for (int i = 0; i < factoids.size(); i++) {
+            if(factoids.get(i).getChannel().equalsIgnoreCase(channel) && factoids.get(i).getChannel().equalsIgnoreCase(command)){
+                return factoids.get(i).getPermission();
+            }
+        }
+        return command;
     }
 
-    public String getUser(String channel, String command) throws SQLException, ClassNotFoundException {
-        ResultSet result;
+    public String getUser(String channel, String command) {
+        for (int i = 0; i < factoids.size(); i++) {
+            if(factoids.get(i).getChannel().equalsIgnoreCase(channel) && factoids.get(i).getChannel().equalsIgnoreCase(command)){
+                return factoids.get(i).getCreator();
+            }
+        }
+        return command;
+    }
+
+    public void cacheFactoids() throws SQLException, ClassNotFoundException {
+        factoids.clear();
         TwitchBot.mySQLConnection.connect();
-        String sql = "SELECT * FROM `FACTOIDS` WHERE `CHANNEL` = ? AND `COMMAND`=?";
-        PreparedStatement preparedStatement = TwitchBot.mySQLConnection.connection.prepareStatement(sql);
-        preparedStatement.setString(1, channel.toLowerCase());
-        preparedStatement.setString(2, command.toLowerCase());
-        result = preparedStatement.executeQuery();
-        if(result.next())
-            return result.getString("USER");
+        ResultSet set;
+        String sql = "SELECT * FROM `FACTOIDS`;";
+        Statement stmt = TwitchBot.mySQLConnection.connection.createStatement();
+        set = stmt.executeQuery(sql);
+        while(set.next()){
+            String channel,creator,command,output,permission;
+            channel=set.getString("CHANNEL");
+            creator=set.getString("USER");
+            command=set.getString("COMMAND");
+            output=set.getString("OUTPUT");
+            permission=set.getString("PERM");
+
+            factoids.add(new Factoid(channel.toLowerCase(),creator.toLowerCase(),command.toLowerCase(),output.toLowerCase(),permission.toLowerCase()));
+        }
         TwitchBot.mySQLConnection.disconnect();
-        return command.toLowerCase();
     }
 }

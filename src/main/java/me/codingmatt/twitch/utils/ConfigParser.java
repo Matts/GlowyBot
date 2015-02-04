@@ -90,6 +90,10 @@ public class ConfigParser {
                                 if(parent.getChildNodes().item(j).getChildNodes().item(k).getNodeName().equalsIgnoreCase("version")){
                                     config.setVersion(parent.getChildNodes().item(j).getChildNodes().item(k).getTextContent().trim());
                                 }
+                                if(parent.getChildNodes().item(j).getChildNodes().item(k).getNodeName().equalsIgnoreCase("controllers")){
+                                    Element e = (Element) parent.getChildNodes().item(j).getChildNodes().item(k);
+                                    config.setControllers(e.getAttribute("names").split(";"));
+                                }
                                 if(parent.getChildNodes().item(j).getChildNodes().item(k).getNodeName().equalsIgnoreCase("modules")){
                                     NodeList moduleList = parent.getChildNodes().item(j).getChildNodes().item(k).getChildNodes();
 
@@ -108,7 +112,6 @@ public class ConfigParser {
                                             ij++;
                                         }
                                     }
-                                    System.out.println(modules[0]);
                                     config.setModules(modules);
                                 }
                             }

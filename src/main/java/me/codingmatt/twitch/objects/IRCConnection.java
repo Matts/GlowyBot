@@ -15,6 +15,7 @@ public class IRCConnection {
     private String defaultChannel;
 
     private String[] modules;
+    private String[] controllers;
 
     public void setName(String name) {
         this.name = name;
@@ -86,5 +87,13 @@ public class IRCConnection {
 
     public String[] getModules(){
         return modules;
+    }
+
+    public String[] getControllers() {
+        return controllers;
+    }
+
+    public void setControllers(String[] controllers) {
+        this.controllers = controllers;
     }
 }

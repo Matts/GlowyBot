@@ -60,17 +60,21 @@ public class MySQLConnection {
 
     public Connection connection;
 
-    public void connect() throws ClassNotFoundException, SQLException {
+    public MySQLConnection getInstance(){
+        return this;
+    }
+
+    public synchronized void connect() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         String dbURL = "jdbc:mysql://"+databaseHost+"/"+table;
         connection = (Connection) DriverManager.getConnection(dbURL, databaseUser, databasePassword);
     }
 
-    public void disconnect() throws SQLException {
+    public synchronized void disconnect() throws SQLException {
         connection.close();
     }
 
-    public void testConnection(){
+    public synchronized void testConnection(){
         try {
             TwitchBot.logger.info("Trying to contact the MySQL database to determent if any fallback is needed");
             connect();

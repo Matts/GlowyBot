@@ -4,6 +4,7 @@ import me.codingmatt.twitch.utils.Registry;
 import me.codingmatt.twitch.objects.annotations.Listeners;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 /**
@@ -23,5 +24,11 @@ public class ModuleCommands extends ListenerAdapter<PircBotX> {
                 Registry.commands.get(i).onMessage(event);
             }
         }
+    }
+
+    @Override
+    public void onJoin(JoinEvent<PircBotX> event) throws Exception {
+        super.onJoin(event);
+        event.getChannel().send().message("Yo, i am GlowBot");
     }
 }
