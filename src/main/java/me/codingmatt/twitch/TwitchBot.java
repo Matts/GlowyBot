@@ -75,8 +75,6 @@ public class TwitchBot {
 
         Viewers.updateViewers.start();
 
-        new HTTPRequest();
-
         
         new TwitchBot();
 

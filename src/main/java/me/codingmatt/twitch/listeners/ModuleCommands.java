@@ -25,10 +25,4 @@ public class ModuleCommands extends ListenerAdapter<PircBotX> {
             }
         }
     }
-
-    @Override
-    public void onJoin(JoinEvent<PircBotX> event) throws Exception {
-        super.onJoin(event);
-        event.getChannel().send().message("Yo, i am GlowBot");
-    }
 }
