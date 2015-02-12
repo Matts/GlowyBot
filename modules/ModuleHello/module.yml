@@ -1,0 +1,5 @@
+name: ModuleHello
+mainClass: me.codingmatt.twitch.modules.ModuleHello
+author: Matt
+info: This is a hello command
+enabled: true

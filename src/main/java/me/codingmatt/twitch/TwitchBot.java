@@ -4,6 +4,7 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import me.codingmatt.twitch.objects.IRCConnection;
 import me.codingmatt.twitch.objects.MySQLConnection;
+
 import me.codingmatt.twitch.objects.annotations.Listeners;
 import me.codingmatt.twitch.utils.*;
 import org.pircbotx.Configuration;
@@ -22,6 +23,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -47,6 +51,9 @@ public class TwitchBot {
     public static String[] controllers;
 
     public static void main(String[] args){
+
+ModuleLoading.loadAllModules();
+
         try {
             File file = new File("config.xml");
             if(!file.exists())

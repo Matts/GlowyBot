@@ -4,8 +4,9 @@ Class-Path: lib/pircbotx-2.0.1.jar lib/commons-lang3-3.1.jar lib/slf4j
  -api-1.7.5.jar lib/commons-codec-1.8.jar lib/guava-15.0.jar lib/logba
  ck-classic-1.1.2.jar lib/logback-core-1.1.2.jar lib/reflections-0.9.9
  .jar lib/javassist-3.18.2-GA.jar lib/annotations-2.0.1.jar lib/mysql-
- connector-java-5.1.34.jar lib/json-20090211.jar
+ connector-java-5.1.34.jar lib/json-20090211.jar lib/snakeyaml-1.14.ja
+ r
 Created-By: IntelliJ IDEA
-Build-Jdk: 1.7.0_71
+Build-Jdk: 1.8.0_25
 Main-Class: me.codingmatt.twitch.TwitchBot
 
