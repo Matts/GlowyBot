@@ -55,6 +55,7 @@ public class ModuleLoading {
 
 
                 LoadModule(file1, (String)conf.get("mainClass"));
+                System.out.println((String)conf.get("mainClass"));
 
             }
         }

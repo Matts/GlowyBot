@@ -19,7 +19,7 @@ import java.util.HashMap;
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
  */
-@Listeners(name = "ModuleFactoids")
+@Listeners(name = "ModuleFactoids", internal = true)
 public class ModuleFactoid extends ListenerAdapter<PircBotX> {
 
     ArrayList<Factoid> factoids = new ArrayList<Factoid>();
@@ -84,9 +84,9 @@ public class ModuleFactoid extends ListenerAdapter<PircBotX> {
         if(event.getMessage().trim().split(" ")[0].startsWith("!")) {
             String output = getOutput(event.getChannel().getName(), event.getMessage().trim().split(" ")[0].substring(1));
             if(!output.equalsIgnoreCase(event.getMessage().trim().split(" ")[0].substring(1))) {
-                if(Permission.Perm.parsePerm(getPermission(event.getChannel().getName(),event.getMessage().trim().split(" ")[0].substring(1))).getHeight()>=Permission.getHighestPerm(event.getUser().getNick(),event.getChannel().getName()).getHeight()) {
+                //if(Permission.Perm.parsePerm(getPermission(event.getChannel().getName(),event.getMessage().trim().split(" ")[0].substring(1))).getHeight()>=Permission.getHighestPerm(event.getUser().getNick(),event.getChannel().getName()).getHeight()) {
                     event.getChannel().send().message(output);
-                }
+                //}
             }
         }
     }
@@ -116,8 +116,12 @@ public class ModuleFactoid extends ListenerAdapter<PircBotX> {
         statement.executeUpdate();
         statement.close();
         TwitchBot.mySQLConnection.disconnect();
-        factoids.remove(command.toLowerCase());
-    }
+        for(Factoid f : factoids){
+            if(f.getCommand().toLowerCase().equalsIgnoreCase(command)){
+                factoids.remove(f);
+            }
+        }
+            }
 
     public String getOutput(String channel, String command) {
         for (int i = 0; i < factoids.size(); i++) {
@@ -165,4 +169,5 @@ public class ModuleFactoid extends ListenerAdapter<PircBotX> {
         }
         TwitchBot.mySQLConnection.disconnect();
     }
+
 }

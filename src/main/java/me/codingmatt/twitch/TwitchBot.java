@@ -50,6 +50,8 @@ public class TwitchBot {
 
     public static String[] controllers;
 
+    public static PircBotX bot;
+
     public static void main(String[] args){
 
 ModuleLoading.loadAllModules();
@@ -67,7 +69,7 @@ ModuleLoading.loadAllModules();
 
         VERSION = ConfigParser.getVersion();
 
-        new Updater();
+//        new Updater();
 
         mySQLConnection = configParser.setupSQLFromConfig();
         mySQLConnection.testConnection();
@@ -101,13 +103,14 @@ ModuleLoading.loadAllModules();
         confi.addAutoJoinChannel(config.getDefaultChannel());
         confi.setEncoding(Charset.isSupported("UTF-8") ? Charset.forName("UTF-8") : Charset.defaultCharset());
 
+
         Registry.setBaseListeners();
 
         ArrayList<Listener> usingListeners = new ArrayList<Listener>();
 
         for (Listener listen : Registry.listeners) {
             for (int i = 0; i < config.getModules().length; i++) {
-                if(config.getModules()[i].equalsIgnoreCase(listen.getClass().getAnnotation(Listeners.class).name())){
+                if(config.getModules()[i].equalsIgnoreCase(listen.getClass().getAnnotation(Listeners.class).name()) || listen.getClass().getAnnotation(Listeners.class).internal()==false){
                     usingListeners.add(listen);
                 }
             }
@@ -123,7 +126,8 @@ ModuleLoading.loadAllModules();
         }
 
         controllers = config.getControllers();
-        PircBotX bot = new PircBotX(confi.buildConfiguration());
+        bot = new PircBotX(confi.buildConfiguration());
+
 
         try {
             logger.info("Starting " + confi.getName() + " | version " + confi.getVersion());
