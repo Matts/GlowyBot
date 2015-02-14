@@ -14,6 +14,7 @@ import java.util.Set;
  */
 public class Registry {
     public static ArrayList<Listener> listeners = new ArrayList<Listener>();
+    public static ArrayList<Listener> modules = new ArrayList<Listener>();
     public static ArrayList<CommandBase> commands = new ArrayList<CommandBase>();
 
     public static void setCommands(){

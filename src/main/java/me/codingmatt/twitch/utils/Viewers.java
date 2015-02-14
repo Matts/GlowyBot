@@ -3,7 +3,6 @@ package me.codingmatt.twitch.utils;
 import me.codingmatt.twitch.TwitchBot;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import java.util.ArrayList;
 import java.util.HashMap;

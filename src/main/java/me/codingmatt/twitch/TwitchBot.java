@@ -4,13 +4,12 @@ import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import me.codingmatt.twitch.objects.IRCConnection;
 import me.codingmatt.twitch.objects.MySQLConnection;
-
 import me.codingmatt.twitch.objects.annotations.Listeners;
+import me.codingmatt.twitch.objects.annotations.Module;
 import me.codingmatt.twitch.utils.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
-
 import org.pircbotx.hooks.Listener;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -23,9 +22,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -54,7 +50,7 @@ public class TwitchBot {
 
     public static void main(String[] args){
 
-ModuleLoading.loadAllModules();
+        ModuleLoading.loadAllModules();
 
         try {
             File file = new File("config.xml");
@@ -69,7 +65,7 @@ ModuleLoading.loadAllModules();
 
         VERSION = ConfigParser.getVersion();
 
-//        new Updater();
+        new Updater();
 
         mySQLConnection = configParser.setupSQLFromConfig();
         mySQLConnection.testConnection();
@@ -88,9 +84,9 @@ ModuleLoading.loadAllModules();
         new TwitchBot();
 
     }
-
+public static IRCConnection config;
     public TwitchBot() {
-        IRCConnection config = configParser.servers.get(0); //TODO: Set-up multibot
+        config = configParser.servers.get(0); //TODO: Set-up multibot
 
         Configuration.Builder confi = new Configuration.Builder();
         confi.setName(config.getName());
@@ -106,20 +102,18 @@ ModuleLoading.loadAllModules();
 
         Registry.setBaseListeners();
 
-        ArrayList<Listener> usingListeners = new ArrayList<Listener>();
-
         for (Listener listen : Registry.listeners) {
             for (int i = 0; i < config.getModules().length; i++) {
-                if(config.getModules()[i].equalsIgnoreCase(listen.getClass().getAnnotation(Listeners.class).name()) || listen.getClass().getAnnotation(Listeners.class).internal()==false){
-                    usingListeners.add(listen);
+                if(config.getModules()[i].equalsIgnoreCase(listen.getClass().getAnnotation(Listeners.class).name())){
+                    confi.addListener(listen);
+                    logger.info("Loading Internal Module: " + listen.getClass().getAnnotation(Listeners.class).name());
                 }
             }
         }
 
-        for (int i = 0; i < usingListeners.size(); i++) {
-            confi.addListener(usingListeners.get(i));
+        for(Listener listen : Registry.modules){
+            confi.addListener(listen);
         }
-
 
         for (String channel : channelsJoined) {
             confi.addAutoJoinChannel(channel);
@@ -130,6 +124,7 @@ ModuleLoading.loadAllModules();
 
 
         try {
+            logger.info("Pre-Init Finished Without Errors");
             logger.info("Starting " + confi.getName() + " | version " + confi.getVersion());
             bot.startBot();
         } catch (IOException e) {
@@ -142,8 +137,9 @@ ModuleLoading.loadAllModules();
     }
 
     public static void firstSetup() throws ParserConfigurationException, IOException {
+
         Scanner scanner = new Scanner(System.in);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getSystemResourceAsStream("./wizard.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemClassLoader().getSystemResourceAsStream("resource/wizard.txt")));
 
         String mySQLHost, mySQLPort, mySQLTable, mySQLUsername, mySQLPassword;
         String serverHost, defaultChannel, password, port, name, autoNickChange, login, version;
@@ -197,7 +193,7 @@ ModuleLoading.loadAllModules();
         Document xmlDoc = builder.newDocument();
 
         Element rootElement = xmlDoc.createElement("config");
-
+        rootElement.setAttribute("botVersion", "0.1");
         Element updateXMLElement = xmlDoc.createElement("updateXML");
 
         updateXMLElement.setAttribute("host", "https://dl.dropboxusercontent.com/u/14369750/update.xml;");

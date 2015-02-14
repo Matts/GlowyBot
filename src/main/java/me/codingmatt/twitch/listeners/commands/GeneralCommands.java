@@ -3,6 +3,7 @@ package me.codingmatt.twitch.listeners.commands;
 import me.codingmatt.twitch.TwitchBot;
 import me.codingmatt.twitch.objects.CommandBase;
 import me.codingmatt.twitch.objects.annotations.Command;
+import me.codingmatt.twitch.utils.ConfigParser;
 import me.codingmatt.twitch.utils.Permission;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -36,7 +37,7 @@ public class GeneralCommands extends CommandBase {
                     TwitchBot.channels.addChannel("#"+event.getUser().getNick().toLowerCase());
                     event.getBot().sendIRC().joinChannel("#" + event.getUser().getNick().toLowerCase());
                     event.getChannel().send().message("I successfully joined your channel (#"+event.getUser().getNick()+")");
-                    event.getChannel().send().message("ADMIN_MODE, (Force) Parting " + event.getMessage().trim().split(" ")[1]);
+
                 } catch (SQLException e) {
                     event.respond(e.getMessage());
                     e.printStackTrace();
@@ -53,6 +54,7 @@ public class GeneralCommands extends CommandBase {
                     try {
                         TwitchBot.channels.removeChannel(event.getMessage().trim().split(" ")[1]);
                         event.getBot().sendRaw().rawLine("PART " + event.getMessage().trim().split(" ")[1]);
+                        event.getChannel().send().message("ADMIN_MODE, (Force) Parting " + event.getMessage().trim().split(" ")[1]);
                     } catch (Exception e) {
                         e.printStackTrace();
                         event.respond(e.getMessage());
@@ -87,8 +89,16 @@ public class GeneralCommands extends CommandBase {
                 Permission.noPerm(event, Permission.Perm.TWITCH_STAFF);
             }
         }
-        if(event.getMessage().trim().split(" ")[0].substring(1).equalsIgnoreCase("test")){
-            event.respond("test");
+        if(event.getMessage().trim().split(" ")[0].substring(1).equalsIgnoreCase("rehash")){
+            if(Permission.hasPermission(Permission.Perm.CONTROLLER,event.getUser().getNick().toLowerCase(), event.getChannel().getName().toLowerCase())) {
+                event.respond("Rehashing Configs...");
+                System.out.println("Config Rehash Initialized By: " + event.getUser().getNick());
+                TwitchBot.configParser = new ConfigParser("config.xml");
+                TwitchBot.config = TwitchBot.configParser.setServerConfiguration().get(0);
+                TwitchBot.controllers = TwitchBot.config.getControllers();
+            }else{
+                Permission.noPerm(event, Permission.Perm.CONTROLLER);
+            }
         }
     }
 }

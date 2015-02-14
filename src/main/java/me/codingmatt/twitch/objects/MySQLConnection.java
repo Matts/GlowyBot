@@ -4,8 +4,6 @@ import com.mysql.jdbc.Connection;
 import me.codingmatt.twitch.TwitchBot;
 
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**

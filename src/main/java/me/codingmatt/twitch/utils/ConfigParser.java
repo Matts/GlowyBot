@@ -60,7 +60,10 @@ public class ConfigParser {
         return null;
     }
 
-    private void setServerConfiguration(){
+
+
+    public ArrayList<IRCConnection> setServerConfiguration(){
+        servers.clear();
         NodeList serverList = document.getElementsByTagName("servers");
 
         for (int i = 0; i < serverList.getLength(); i++) {
@@ -91,6 +94,7 @@ public class ConfigParser {
                                     config.setVersion(parent.getChildNodes().item(j).getChildNodes().item(k).getTextContent().trim());
                                 }
                                 if(parent.getChildNodes().item(j).getChildNodes().item(k).getNodeName().equalsIgnoreCase("controllers")){
+
                                     Element e = (Element) parent.getChildNodes().item(j).getChildNodes().item(k);
                                     config.setControllers(e.getAttribute("names").split(";"));
                                 }
@@ -121,7 +125,7 @@ public class ConfigParser {
                 }
             }
         }
-
+return servers;
     }
 
     public static String getVersion(){

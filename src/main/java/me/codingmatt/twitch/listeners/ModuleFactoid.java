@@ -1,7 +1,6 @@
 package me.codingmatt.twitch.listeners;
 
 import me.codingmatt.twitch.TwitchBot;
-import me.codingmatt.twitch.objects.CommandBase;
 import me.codingmatt.twitch.objects.Factoid;
 import me.codingmatt.twitch.objects.annotations.Listeners;
 import me.codingmatt.twitch.utils.Permission;
@@ -14,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me

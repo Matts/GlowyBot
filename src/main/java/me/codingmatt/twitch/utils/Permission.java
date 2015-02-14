@@ -1,7 +1,6 @@
 package me.codingmatt.twitch.utils;
 
 import me.codingmatt.twitch.TwitchBot;
-import org.pircbotx.Colors;
 import org.pircbotx.hooks.events.MessageEvent;
 
 /**
@@ -35,6 +34,15 @@ public class Permission {
                 return true;
             }
         }
+        if (perm.height <= Perm.CONTROLLER.height) {
+            for (int i = 0; i < TwitchBot.controllers.length; i++) {
+                if(TwitchBot.controllers[i].equalsIgnoreCase(username.toLowerCase())){
+                    return true;
+                }
+            }
+        }
+
+        /**Controller-Override**/
         for (int i = 0; i < TwitchBot.controllers.length; i++) {
             if(TwitchBot.controllers[i].equalsIgnoreCase(username.toLowerCase())){
                 return true;
@@ -64,7 +72,7 @@ public class Permission {
     }
 
     public static enum Perm{
-        VIEWER(1), MOD(2), BROADCASTER(3), TWITCH_STAFF(100);
+        VIEWER(1), MOD(2), BROADCASTER(3), TWITCH_STAFF(100), CONTROLLER(101);
 
         private int height;
 
