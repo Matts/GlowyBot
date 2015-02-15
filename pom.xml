@@ -6,7 +6,7 @@
 
     <groupId>me.codingmatt.twitch</groupId>
     <artifactId>TwitchBot</artifactId>
-    <version>pre-birth</version>
+    <version>0.1-BETA</version>
     <dependencies>
         <dependency>
             <groupId>org.pircbotx</groupId>

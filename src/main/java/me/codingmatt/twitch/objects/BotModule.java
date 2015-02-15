@@ -1,12 +1,9 @@
 package me.codingmatt.twitch.objects;
 
 import me.codingmatt.twitch.TwitchBot;
-import me.codingmatt.twitch.objects.annotations.Listeners;
 import me.codingmatt.twitch.objects.annotations.Module;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.ListenerAdapter;
-
-import java.lang.annotation.Annotation;
 
 /**
  * Copyright (c) 2015 Matthew Smeets - http://www.codingmatt.me
@@ -19,7 +16,7 @@ public class BotModule extends ListenerAdapter<PircBotX> {
     }
 
     public void init(){
-        TwitchBot.logger.info("Initializing Module " + moduleName);
+        TwitchBot.logger.info("Initializing External Module " + moduleName);
     }
 
     private void readAnnotation(){

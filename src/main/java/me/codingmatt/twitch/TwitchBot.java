@@ -5,7 +5,6 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 import me.codingmatt.twitch.objects.IRCConnection;
 import me.codingmatt.twitch.objects.MySQLConnection;
 import me.codingmatt.twitch.objects.annotations.Listeners;
-import me.codingmatt.twitch.objects.annotations.Module;
 import me.codingmatt.twitch.utils.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
@@ -50,8 +49,11 @@ public class TwitchBot {
 
     public static void main(String[] args){
 
-        ModuleLoading.loadAllModules();
-
+        try {
+            new JarModuleLoading();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try {
             File file = new File("config.xml");
             if(!file.exists())
@@ -80,9 +82,8 @@ public class TwitchBot {
 
         Viewers.updateViewers.start();
 
-        
-        new TwitchBot();
 
+        new TwitchBot();
     }
 public static IRCConnection config;
     public TwitchBot() {
