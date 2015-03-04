@@ -32,9 +32,10 @@ public class Viewers {
     public static synchronized void updateAllViewers() {
         for (int i = 0; i < TwitchBot.channelsJoined.size(); i++) {
             try {
+                updateTwitchPeeps(TwitchBot.channelsJoined.get(i));
                 updateViewers(TwitchBot.channelsJoined.get(i));
                 updateModerators(TwitchBot.channelsJoined.get(i));
-                updateTwitchPeeps(TwitchBot.channelsJoined.get(i));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

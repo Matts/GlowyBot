@@ -58,16 +58,16 @@ public class Permission {
     public static Perm getHighestPerm(String user, String channel){
         if(Viewers.twitchPeeps.get(channel.toLowerCase()).contains(user.toLowerCase())){
             return Perm.TWITCH_STAFF;
-        }
+        }else
         if(user.toLowerCase().equalsIgnoreCase(channel.toLowerCase())){
             return Perm.BROADCASTER;
-        }
+        }else
         if(Viewers.moderators.get(channel.toLowerCase()).contains(user.toLowerCase())){
             return Perm.TWITCH_STAFF;
-        }
+        }else
         if(Viewers.channelViewers.get(channel.toLowerCase()).contains(user.toLowerCase())){
             return Perm.TWITCH_STAFF;
-        }
+        }else
         return Perm.VIEWER;
     }
 
